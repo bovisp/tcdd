@@ -5,3 +5,5 @@ Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
   Route::post('logout', 'LogoutController');
   Route::get('me', 'MeController');
 });
+
+Route::resource('projects', 'ProjectsController');
