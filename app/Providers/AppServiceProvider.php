@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,5 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
       Schema::defaultStringLength(191);
+
+      Cache::forever('cometLanguages', DB::table('comet_languages')->get());
     }
 }

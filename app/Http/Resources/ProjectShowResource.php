@@ -20,6 +20,7 @@ class ProjectShowResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'image' => $this->image,
             'owner' => new UserResource($this->owner),
             'notes' => ProjectNoteResource::collection($this->notes)
         ];

@@ -6,4 +6,11 @@ Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
   Route::get('me', 'MeController');
 });
 
+Route::prefix('comet')->middleware(['auth:api'])->group(function() {
+
+  Route::get('/scrape', 'CometScrapeController@scrape');
+
+  Route::get('/scrape/{page}', 'CometScrapeController@scrapeModuleListingPage');  
+});
+
 Route::resource('projects', 'ProjectsController');

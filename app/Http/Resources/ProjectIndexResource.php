@@ -18,8 +18,7 @@ class ProjectIndexResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'owner' => new UserResource($this->owner),
-            'notes' => ProjectNoteResource::collection($this->notes)
+            'image' => $this->image
         ];
     }
 }
