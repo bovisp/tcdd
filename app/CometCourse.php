@@ -3,6 +3,7 @@
 namespace App;
 
 use App\CometCourse;
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class CometCourse extends Model

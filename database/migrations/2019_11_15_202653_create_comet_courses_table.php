@@ -31,9 +31,9 @@ class CreateCometCoursesTable extends Migration
         $table->unsignedInteger('language_id');
         $table->timestamps();
 
-        $table->foreign('language_id')
-          ->references('id')
-          ->on('comet_languages');
+        // $table->foreign('language_id')
+        //   ->references('id')
+        //   ->on('comet_languages');
       });
     }
 
