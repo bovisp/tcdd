@@ -28,6 +28,6 @@ class AppServiceProvider extends ServiceProvider
     {
       Schema::defaultStringLength(191);
 
-      Cache::forever('cometLanguages', DB::table('comet_languages')->get());
+      Cache::forever('languages', DB::table('languages')->get());
     }
 }

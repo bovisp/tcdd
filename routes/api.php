@@ -14,3 +14,5 @@ Route::prefix('comet')->middleware(['auth:api'])->group(function() {
 });
 
 Route::resource('projects', 'ProjectsController');
+
+Route::get('search', 'SearchController@index');

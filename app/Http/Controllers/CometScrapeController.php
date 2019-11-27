@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', '600');
 
 use Goutte\Client;
-use App\CometCourse;
+use App\Course;
 use App\Classes\CometScrape;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -35,8 +35,6 @@ class CometScrapeController extends Controller
 
   public function scrape()
   {
-    CometCourse::truncate();
-
     $crawler = $this->client
       ->request(
         'GET', 

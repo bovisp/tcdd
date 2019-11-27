@@ -11,7 +11,7 @@ class CometLanguagesTableSeeder extends Seeder
      */
     public function run()
     {
-      DB::table('comet_languages')->insert([
+      DB::table('languages')->insert([
         [
           'language_id' => 1,
           'language' => 'English'

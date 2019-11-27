@@ -4,10 +4,12 @@ namespace App\Classes;
 
 ini_set('max_execution_time', '600');
 
+use App\Course;
 use Goutte\Client;
-use App\CometCourse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Traits\KeywordTrait;
+use App\Traits\SubjectTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client as GuzzleClient;
@@ -15,6 +17,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class CometScrape
 {
+  use SubjectTrait, KeywordTrait;
+  
   protected $client;
 
   protected $guzzleClient;
@@ -40,7 +44,7 @@ class CometScrape
 
     $this->client->setClient($this->guzzleClient);
 
-    $this->languages = Cache::get('cometLanguages');
+    $this->languages = Cache::get('languages');
   }
 
   public function scrape()
@@ -77,7 +81,9 @@ class CometScrape
 
     $newModule = $this->storeModule($moduleCrawler, $moduleId, 'English', null);
 
-    $this->getOtherModuleLanguages($moduleCrawler, $newModule->id);
+    if ($newModule) {
+      $this->getOtherModuleLanguages($moduleCrawler, $newModule->id);
+    }
   }
 
   protected function storeModule($crawler, $moduleId, $language, $englishModuleId)
@@ -96,21 +102,27 @@ class CometScrape
 
     $imageSrc = $crawler->filter('.module_image img')->first()->attr('src');
 
-    $module = CometCourse::create([
+    if (Course::where('module_id', $moduleId)->first() !== null) return null;
+
+    $module = Course::create([
       'title' => trim($title),
       'module_id' => $moduleId,
       'publish_date' => date('Y-m-d', strtotime($meta['publish_date'])),
       'skill_level' => $meta['skill_level'],
       'completion_time' => $meta['completion_time'],
-      'topics' => serialize($meta['topics']),
       'last_updated_on' => date('Y-m-d', strtotime($meta['last_updated_on'])),
       'description' => trim($description),
       'objectives' => trim($objectives),
-      'keywords' => serialize($keywords),
       'language_id' => $languageId,
       'image_src' => "{$this->baseUrl}/{$imageSrc}",
-      'english_module_id' => $englishModuleId
+      'english_module_id' => $englishModuleId,
+      'keywords' => serialize($this->getKeywords($crawler)),
+      'topics' => serialize($meta['topics'])
     ]);
+
+    $this->storeSubjects($meta['topics'], $module);
+
+    $this->storeKeywords($keywords, $module);
 
     return $module;
   }
@@ -213,10 +225,13 @@ class CometScrape
 
   protected function getKeywords($crawler)
   {
-    return explode(
-      ',', str_replace(
+    return preg_split(
+      '/[,;]+/'
+      , str_replace(
         ', ', ',', trim($crawler->filter('.tab_content_wrap #content_05')->first()->text())
-        )
+      ),
+      -1,
+      PREG_SPLIT_NO_EMPTY
     );
   }
 
